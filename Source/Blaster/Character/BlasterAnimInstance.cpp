@@ -87,30 +87,31 @@ void UBlasterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		if (BlasterCharacter->IsLocallyControlled())
 		{
 			bLocallyControlled = true;			
-			FTransform RightHandTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("Hand_R"),
+			FTransform RightHandTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("hand_r"),
 				ERelativeTransformSpace::RTS_World);
 			
-
-			//FTransform RightHandTransform = BlasterCharacter->GetMesh()->GetSocketTransform(FName("Hand_R"),
-			//	ERelativeTransformSpace::RTS_World);
-
-			
-			RightHandRotation = UKismetMathLibrary::FindLookAtRotation(RightHandTransform.GetLocation(),
+			FRotator LookAtRotation = UKismetMathLibrary::FindLookAtRotation(RightHandTransform.GetLocation(),
 				RightHandTransform.GetLocation() + (RightHandTransform.GetLocation() - BlasterCharacter->GetHitTarget()));
+			
+			RightHandRotation = FMath::RInterpTo(RightHandRotation, LookAtRotation, DeltaSeconds, 30.f);
 		}
 
-		/* Debug Lines for Aiming.
+		/* Debug Lines for Aiming. */
 
-		FTransform MuzzleTipTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("MuzzleFlash"),
-			ERelativeTransformSpace::RTS_World);
+		if (BlasterCharacter->IsLocallyControlled())
+		{
+			FTransform MuzzleTipTransform = EquippedWeapon->GetWeaponMesh()->GetSocketTransform(FName("MuzzleFlash"),
+				ERelativeTransformSpace::RTS_World);
 
-		FVector MuzzleX(FRotationMatrix(MuzzleTipTransform.GetRotation().Rotator()).GetUnitAxis(EAxis::X));
+			FVector MuzzleX(FRotationMatrix(MuzzleTipTransform.GetRotation().Rotator()).GetUnitAxis(EAxis::X));
 
-		DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(),
-		              MuzzleTipTransform.GetLocation() + MuzzleX * 1000.f, FColor::Red);
+			DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(),
+						  MuzzleTipTransform.GetLocation() + MuzzleX * 1000.f, FColor::Red);
 
-		DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(),
-		              BlasterCharacter->GetHitTarget(), FColor::Orange);
-		*/
+			DrawDebugLine(GetWorld(), MuzzleTipTransform.GetLocation(),
+						  BlasterCharacter->GetHitTarget(), FColor::Orange);
+		}
+		
+		/**/
 	}
 }
