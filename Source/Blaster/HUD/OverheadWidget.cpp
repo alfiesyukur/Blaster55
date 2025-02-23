@@ -5,11 +5,11 @@
 
 bool UOverheadWidget::Initialize()
 {
-	UWorld* World = GetWorld();
-	if (World)
+	if (UWorld* World = GetWorld())
 	{
 		FDeOnLevelRemovedFromWorldHandle = FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &ThisClass::OnLevelRemovedFromWorld);
 	}
+
 	return Super::Initialize();
 }
 
