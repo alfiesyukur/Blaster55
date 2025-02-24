@@ -15,9 +15,8 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FStr
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 	SetIsFocusable(true);
-	
-	UWorld* World = GetWorld();
-	if (World)
+
+	if (UWorld* World = GetWorld())
 	{
 		APlayerController* PlayerController = World->GetFirstPlayerController();
 		if (PlayerController)
@@ -64,6 +63,13 @@ bool UMenu::Initialize()
 	}
 
 	return true;
+}
+
+void UMenu::NativeDestruct()
+{
+	FWorldDelegates::LevelRemovedFromWorld.Remove(OnLevelRemovedFromWorldHandle);
+	
+	Super::NativeDestruct();
 }
 
 

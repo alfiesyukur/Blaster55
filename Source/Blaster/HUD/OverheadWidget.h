@@ -15,9 +15,9 @@ class BLASTER_API UOverheadWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
-public:
-
+public:	
 	virtual bool Initialize() override;
+	virtual void NativeDestruct() override;
 	
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* DisplayText;

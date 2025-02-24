@@ -13,6 +13,12 @@ bool UOverheadWidget::Initialize()
 	return Super::Initialize();
 }
 
+void UOverheadWidget::NativeDestruct()
+{
+	FWorldDelegates::LevelRemovedFromWorld.Remove(FDeOnLevelRemovedFromWorldHandle);
+	Super::NativeDestruct();
+}
+
 void UOverheadWidget::SetDisplayText(const FString& TextToDisplay) const
 {
 	if (DisplayText)
@@ -65,9 +71,7 @@ void UOverheadWidget::ShowPlayerNetRole(const APawn* InPawn) const
 	}
 	
 	const FString RoleString = FString::Printf(TEXT("Local Role: %s\nRemote Role: %s"), *FS_LocalRole, *FS_RemoteRole);
-	SetDisplayText(RoleString);
-
-	
+	SetDisplayText(RoleString);	
 }
 
 void UOverheadWidget::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
