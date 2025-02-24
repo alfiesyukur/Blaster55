@@ -40,8 +40,8 @@ protected:
 
 	void FireButtonPressed(bool bPressed);
 
-	UFUNCTION(Server, Reliable)
-	void ServerFire(const FVector_NetQuantize& TraceHitTarget);
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerFire(const FVector_NetQuantize& TraceHitTarget, float FireDelay);
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
@@ -69,6 +69,11 @@ private:
 	float AimWalkSpeed;
 
 	bool bFireButtonPressed;
+
+	
+	void Fire();
+	void FireProjectileWeapon();
+	void LocalFire(const FVector_NetQuantize& TraceHitTarget);
 	
 	/** 
 	* HUD and crosshairs
@@ -98,6 +103,18 @@ private:
 	float ZoomInterpSpeed = 20.f;
 
 	void InterpFOV(float DeltaTime);
+
+	/**
+	 * Automatic fire.
+	 */
+	
+	FTimerHandle FireTimer;
+	bool bCanFire = true;
+	
+	void StartFireTimer();	
+	void FireTimerFinished();
+	
+	bool CanFire();
 	
 public:
 	

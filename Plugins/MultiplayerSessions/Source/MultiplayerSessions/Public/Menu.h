@@ -22,7 +22,7 @@ protected:
 
 	virtual bool Initialize() override;
 	virtual void NativeDestruct() override;
-	
+
 	//
 	// Callbacks for the custom delegates on the MultiplayerSessionsSubsystem
 	//
@@ -33,10 +33,7 @@ protected:
 	UFUNCTION()
 	void OnDestroySession(bool bWasSuccessful);
 	UFUNCTION()
-	void OnStartSession(bool bWasSuccessful);	
-
-	void OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld);
-	FDelegateHandle OnLevelRemovedFromWorldHandle;
+	void OnStartSession(bool bWasSuccessful);
 
 private:
 
@@ -56,12 +53,8 @@ private:
 
 	// The subsystem designed to handle all online session functionality
 	class UMultiplayerSessionsSubsystem* MultiplayerSessionsSubsystem;
-	
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+
 	int32 NumPublicConnections{4};
-
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	FString MatchType{TEXT("FreeForAll")};
-
 	FString PathToLobby{TEXT("")};
 };

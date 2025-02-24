@@ -14,9 +14,10 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FStr
 	MatchType = TypeOfMatch;
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
-	SetIsFocusable(true);
+	bIsFocusable = true;
 
-	if (UWorld* World = GetWorld())
+	UWorld* World = GetWorld();
+	if (World)
 	{
 		APlayerController* PlayerController = World->GetFirstPlayerController();
 		if (PlayerController)
@@ -25,13 +26,12 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FStr
 			InputModeData.SetWidgetToFocus(TakeWidget());
 			InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 			PlayerController->SetInputMode(InputModeData);
-			PlayerController->SetShowMouseCursor(true);			
+			PlayerController->SetShowMouseCursor(true);
 		}
+	}
 
-		OnLevelRemovedFromWorldHandle = FWorldDelegates::LevelRemovedFromWorld.AddUObject(this, &ThisClass::OnLevelRemovedFromWorld);
-	}	
-
-	if (UGameInstance* GameInstance = GetGameInstance())
+	UGameInstance* GameInstance = GetGameInstance();
+	if (GameInstance)
 	{
 		MultiplayerSessionsSubsystem = GameInstance->GetSubsystem<UMultiplayerSessionsSubsystem>();
 	}
@@ -67,17 +67,9 @@ bool UMenu::Initialize()
 
 void UMenu::NativeDestruct()
 {
-	FWorldDelegates::LevelRemovedFromWorld.Remove(OnLevelRemovedFromWorldHandle);
-	
+	MenuTearDown();
 	Super::NativeDestruct();
 }
-
-
-void UMenu::OnLevelRemovedFromWorld(ULevel* InLevel, UWorld* InWorld)
-{
-	MenuTearDown();
-}
-
 
 void UMenu::OnCreateSession(bool bWasSuccessful)
 {
