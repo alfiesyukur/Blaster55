@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Blaster/BlasterTypes/TurningInPlace.h"
 #include "Blaster/Interfaces/InteractWithCrosshairsInterface.h"
+#include "Components/TimelineComponent.h"
 #include "BlasterCharacter.generated.h"
 
 class UCombatComponent;
@@ -31,7 +32,7 @@ public:
 	virtual void OnRep_ReplicatedMovement() override;
 
 	void Elim();
-	
+
 	UFUNCTION(NetMulticast, reliable)
 	void MulticastElim();
 
@@ -67,8 +68,32 @@ protected:
 	FTimerHandle ElimTimer;
 	void ElimTimerFinished();
 
-	UPROPERTY(EditDefaultsOnly, Category = "Player Stats")
+	UPROPERTY(EditDefaultsOnly, Category = "Elim Effects")
 	float ElimDelay = 3.f;
+
+	/**	 
+	 * Dissolve Effect
+	 */
+	UPROPERTY(VisibleAnywhere, Category = "Elim Effects")
+	UTimelineComponent* DissolveTimeline;
+
+	FOnTimelineFloat DissolveTrack;
+
+	UPROPERTY(EditAnywhere, Category = "Elim Effects")
+	UCurveFloat* DissolveCurve;
+
+	// Dynamic instance that we can change at runtime.
+	UPROPERTY(VisibleAnywhere, Category = "Elim Effects")
+	UMaterialInstanceDynamic* DynamicDissolveMaterialInstance;
+
+	// Dynamic instance set on the blueprint, used with the dynamic material instance.
+	UPROPERTY(EditAnywhere, Category = "Elim Effects")
+	UMaterialInstance* DissolveMaterialInstance;
+
+	UFUNCTION()
+	void UpdateDissolveMaterial(float DissolveValue);
+
+	void StartDissolve();
 
 	void AimOffset(float DeltaTime);
 	void CalculateAO_Pitch();
