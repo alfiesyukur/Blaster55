@@ -1,0 +1,16 @@
+// Blaster, Multiplayer Shooter Game.
+
+
+#include "BlasterGameMode.h"
+#include "Blaster/Character/BlasterCharacter.h"
+#include "Blaster/PlayerController/BlasterPlayerController.h"
+
+void ABlasterGameMode::PlayerEliminated(class ABlasterCharacter* ElimmedCharacter,
+                                        class ABlasterPlayerController* VictimController,
+                                        ABlasterPlayerController* AttackerController)
+{
+	if (ElimmedCharacter)
+	{
+		ElimmedCharacter->Elim();
+	}
+}

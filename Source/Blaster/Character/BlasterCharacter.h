@@ -20,17 +20,17 @@ class BLASTER_API ABlasterCharacter : public ACharacter, public IInteractWithCro
 	GENERATED_BODY()
 
 public:
-	ABlasterCharacter();	
+	ABlasterCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void PostInitializeComponents() override;
 	void PlayFireMontage(bool bAiming);
+	void PlayElimMontage() const;
 
-	UFUNCTION(NetMulticast, Unreliable)
-	void MulticastHit();
+	virtual void OnRep_ReplicatedMovement() override;
+	void Elim();
 
-	virtual void OnRep_ReplicatedMovement() override;	
 protected:
 	virtual void BeginPlay() override;
 
@@ -43,13 +43,36 @@ protected:
 	void AimButtonPressed();
 	void AimButtonReleased();
 	float CalculateSpeed();
+
+	/**
+	* Player health
+	*/
+
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float MaxHealth = 100.f;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Health, VisibleAnywhere, Category = "Player Stats")
+	float Health = 100.f;
+
+	UFUNCTION()
+	void OnRep_Health();
+
+	class ABlasterPlayerController* BlasterPlayerController;
+	bool bElim = false;
+
 	void AimOffset(float DeltaTime);
 	void CalculateAO_Pitch();
 	void SimProxiesTurn();
+
 	virtual void Jump() override;
 	void FireButtonPressed();
 	void FireButtonReleased();
-	void PlayHitReactMontage();	
+	void PlayHitReactMontage() const;
+
+	UFUNCTION()
+	void ReceiveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+	                   class AController* InstigatorController, AActor* DamageCauser);
+	void UpdateHUDHealth();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = Camera)
@@ -72,12 +95,12 @@ private:
 
 	UFUNCTION(Server, Reliable)
 	void ServerEquipButtonPressed();
-	float AO_Yaw;	
-	float InterpAO_Yaw;	
+	float AO_Yaw;
+	float InterpAO_Yaw;
 	float AO_Pitch;
 	FRotator StartingAimRotation;
 	ETurningInPlace TurningInPlace;
-	void TurnInPlace(float DeltaTime);	
+	void TurnInPlace(float DeltaTime);
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	class UAnimMontage* FireWeaponMontage;
@@ -85,13 +108,16 @@ private:
 	UPROPERTY(EditAnywhere, Category = Combat)
 	UAnimMontage* HitReactMontage;
 
+	UPROPERTY(EditAnywhere, Category = Combat)
+	UAnimMontage* ElimMontage;
+
 	void HideCameraIfCharacterClose();
 
 	UPROPERTY(EditAnywhere, Category = Combat)
 	float CameraThreshold = 200.f;
 
 	bool bRotateRootBone;
-	
+
 	// Threshold value for turning on simulated proxy character.
 	float TurnThreshold = 0.5f;
 
@@ -99,21 +125,21 @@ private:
 	FRotator ProxyRotation;
 	float ProxyYaw;
 	float TimeSinceLastMovementReplication;
-	
 
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 	bool IsWeaponEquipped() const;
 	bool IsAiming() const;
 
-	
+
 	FORCEINLINE float GetAO_Yaw() const { return AO_Yaw; }
 	FORCEINLINE float GetAO_Pitch() const { return AO_Pitch; }
-	
+
 	AWeapon* GetEquippedWeapon() const;
 	FORCEINLINE ETurningInPlace GetTurningInPlace() const { return TurningInPlace; }
 	FVector GetHitTarget() const;
 
 	FORCEINLINE UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 	FORCEINLINE bool ShouldRotateRootBone() const { return bRotateRootBone; }
+	FORCEINLINE bool IsElimmed() const { return bElim; }
 };
