@@ -13,7 +13,7 @@ void ALobbyGameMode::PostLogin(APlayerController* NewPlayer)
 		if(World)
 		{
 			bUseSeamlessTravel = true;
-			World->ServerTravel("/Game/Maps/BlasterMap?listen");
+			World->ServerTravel("/Game/Maps/BlasterMap_02?listen");
 		}
 	}	
 }

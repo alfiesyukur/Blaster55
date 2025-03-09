@@ -15,7 +15,6 @@ void UMenu::MenuSetup(int32 NumberOfPublicConnections, FString TypeOfMatch, FStr
 	AddToViewport();
 	SetVisibility(ESlateVisibility::Visible);
 	SetIsFocusable(true);
-	//bIsFocusable = true;
 
 	UWorld* World = GetWorld();
 	if (World)

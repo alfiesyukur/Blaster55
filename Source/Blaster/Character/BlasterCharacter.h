@@ -29,7 +29,11 @@ public:
 	void PlayElimMontage() const;
 
 	virtual void OnRep_ReplicatedMovement() override;
+
 	void Elim();
+	
+	UFUNCTION(NetMulticast, reliable)
+	void MulticastElim();
 
 protected:
 	virtual void BeginPlay() override;
@@ -59,6 +63,12 @@ protected:
 
 	class ABlasterPlayerController* BlasterPlayerController;
 	bool bElim = false;
+
+	FTimerHandle ElimTimer;
+	void ElimTimerFinished();
+
+	UPROPERTY(EditDefaultsOnly, Category = "Player Stats")
+	float ElimDelay = 3.f;
 
 	void AimOffset(float DeltaTime);
 	void CalculateAO_Pitch();
